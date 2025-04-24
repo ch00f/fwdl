@@ -70,7 +70,6 @@ func createAlbumDir(instanceUrl, id string) string {
 	var jsonMap map[string]any
 	json.Unmarshal(rawBody, &jsonMap)
 	dirPath := jsonMap["title"].(string)
-
 	err := os.Mkdir(dirPath, os.ModePerm)
 	check(err)
 
@@ -78,10 +77,12 @@ func createAlbumDir(instanceUrl, id string) string {
 }
 
 func getWithBody(url string) []byte {
-	res, err := http.Get(url)
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	req.SetBasicAuth("<username>", "<password>")
+	res, err := client.Do(req)
 	check(err)
 	defer res.Body.Close()
-
 	rawBody, err := io.ReadAll(res.Body)
 	check(err)
 
